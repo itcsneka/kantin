@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>IT CLUB SNEKA — Kantin Digital (SPA)</title>
+  <link rel="icon" type="image/png" href="https://files.catbox.moe/brcvv3.png">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <meta name="description" content="IT CLUB SNEKA - IT Club SMK N 4 Klaten" />
+  <style>
+    :root{
+      --bg:#ffffff; --text:#0f172a; --muted:#64748b; --accent:#0ea5a4; --glass: rgba(15,23,42,0.06);
+      --card:#f8fafc; --radius:14px; --container:1200px;
+      --green-1: #28a745; --green-2: #1e7e34;
+      --blue-1: #007bff; --blue-2: #0056b3;
+      --danger: #dc3545;
+      --toast-bg: rgba(0,0,0,0.75);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale; line-height:1.45;
+    }
+    a{color:inherit;text-decoration:none}
+    header{position:sticky;top:0;backdrop-filter: blur(6px);z-index:60;
+      background:linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.35));
+      border-bottom:1px solid rgba(15,23,42,0.04);
+    }
+    .nav-ct{max-width:var(--container);margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:relative}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{
+      width:44px; height:44px;
+      border-radius:10px;
+      overflow: hidden;
+      display:flex; align-items:center; justify-content:center;
+      box-shadow:0 6px 18px rgba(14,165,164,0.12);
+      background:transparent;
+    }
+    .logo img { width:100%; height:100%; object-fit:cover; display:block; }
+    .brand h1{font-size:16px;margin:0}
+    nav{display:flex;align-items:center;gap:18px;position:relative}
+    .nav-links{display:flex;gap:12px}
+    .btn{padding:8px 14px;border-radius:10px;background:var(--accent);color:white;font-weight:600;border:none;cursor:pointer}
+    .ghost{background:transparent;border:1px solid rgba(15,23,42,0.06);padding:8px 12px;border-radius:10px}
+    .container{max-width:var(--container);margin:0 auto;padding:40px 20px}
+    .card{background:var(--card);padding:18px;border-radius:14px;box-shadow:0 8px 24px rgba(15,23,42,0.04)}
+    .muted{color:var(--muted)}
+    .kantin { font-size:25px; }
+
+/* product */
+    .product-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:18px; }
+    .product-card { padding:12px; border-radius:12px; background:linear-gradient(180deg, #fff, var(--card)); border:1px solid rgba(15,23,42,0.03); display:flex; flex-direction:column; gap:8px; align-items:center; text-align:center; transition: transform 160ms ease, box-shadow 160ms ease; }
+    .product-card:hover{ transform: translateY(-6px); box-shadow:0 14px 30px rgba(2,6,23,0.08); }
+    .product-card img.product-logo { width:100%; height:auto; object-fit:cover; border-radius:10px; }
+    .product-title { font-weight:700; margin-top:6px; }
+    .price { color:var(--muted); margin-top:10px; font-weight:600; }
+    .stock { margin-top:6px; font-size:13px; color:var(--muted); }
+    .product-actions { display:flex; gap:8px; width:100%; justify-content:center; margin-top:8px; }
+    .btn-order { background:var(--green-1); color:white; border:none; padding:10px 12px; border-radius:10px; cursor:pointer; font-weight:700; box-shadow:0 6px 14px rgba(39,174,96,0.08); }
+    .btn-order:active { background:var(--green-2); }
+    .btn-cart { background:var(--blue-1); color:white; border:none; padding:10px 12px; border-radius:10px; cursor:pointer; font-weight:700; box-shadow:0 6px 14px rgba(0,123,255,0.08); }
+    .btn-cart:active { background:var(--blue-2); }
+
+/* cart fullscreen */
+    .cart-screen { display:none; position:fixed; inset:0; z-index:300; background: rgba(2,6,23,0.48); align-items:center; justify-content:center; padding:20px; }
+    .cart-screen.open { display:flex; }
+    .cart-box { width:100%; max-width:980px; background:white; border-radius:12px; box-shadow:0 20px 50px rgba(2,6,23,0.24); overflow:hidden; }
+    .cart-head { display:flex; justify-content:space-between; align-items:center; padding:18px; border-bottom:1px solid rgba(15,23,42,0.04); }
+    .cart-body{ padding:18px; max-height:60vh; overflow:auto; display:flex; flex-direction:column; gap:10px; }
+    .cart-foot{ padding:14px 18px; border-top:1px solid rgba(15,23,42,0.04); display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    .cart-item { display:flex; gap:12px; align-items:center; padding:10px; border-radius:10px; border:1px solid rgba(15,23,42,0.03); }
+    .cart-item img{ width:84px; height:64px; object-fit:cover; border-radius:8px; }
+    .cart-item .meta { flex:1; }
+    .cart-item .meta .name { font-weight:700; }
+    .cart-item .meta .sub { color:var(--muted); font-size:13px; margin-top:6px; }
+    .cart-item .qty-controls { display:flex; gap:6px; align-items:center; }
+
+/* qty modal (neutral style) */
+    .qty-modal { display:none; position:fixed; inset:0; z-index:400; background: rgba(2,6,23,0.36); align-items:center; justify-content:center; padding:20px; }
+    .qty-modal.open { display:flex; }
+    .qty-box { width:100%; max-width:420px; background:#fff; border-radius:12px; padding:18px; box-shadow:0 16px 40px rgba(2,6,23,0.18); }
+    .qty-row{ display:flex; gap:10px; align-items:center; margin-top:12px; }
+    .qty-box .label { font-weight:700; margin-bottom:8px; }
+    .qty-input{ width:100%; padding:10px; border-radius:10px; border:1px solid rgba(15,23,42,0.08); }
+
+/* order screen restyle */
+    .order-screen { display:none; position:fixed; inset:0; z-index:350; background: #f6f9fb; overflow:auto; padding:28px; }
+    .order-screen.open { display:block; }
+    .order-card { max-width:980px; margin:0 auto; background:white; border-radius:12px; padding:18px; box-shadow:0 12px 36px rgba(2,6,23,0.08); }
+    .form-row { display:flex; gap:10px; margin-top:10px; }
+    .form-col { flex:1; }
+
+    .muted-sm { color:var(--muted); font-size:13px; }
+    .btn-confirm { padding:10px 14px;border-radius:10px;background:var(--green-1);color:white;font-weight:700;border:none;cursor:pointer; box-shadow:0 8px 18px rgba(39,174,96,0.12); }
+    .btn-secondary { padding:8px 12px;border-radius:8px;background:#f1f3f5;border:none;cursor:pointer }
+
+/* toast */
+    .toast { position:fixed; left:50%; transform:translateX(-50%); bottom:28px; background:var(--toast-bg); color:white; padding:10px 14px; border-radius:999px; z-index:500; opacity:0; transition:opacity 220ms ease, transform 220ms ease; pointer-events:none; }
+    .toast.show { opacity:1; transform:translateX(-50%) translateY(-6px); pointer-events:auto; }
+
+    @media (max-width:980px){
+      .product-grid { grid-template-columns:repeat(2,1fr); }
+      .cart-box{ max-width:720px; }
+    }
+    @media (max-width:640px){
+      .product-grid { grid-template-columns:1fr; }
+      .form-row { flex-direction:column; }
+      .logo { width:36px; height:36px; }
+    }
+    .order-input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(0,123,255,0.15);
+      background: #f0f6ff;
+    }
+    .order-input:focus {
+      outline: 2px solid #007bff33;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav-ct">
+      <div class="brand">
+        <div class="logo">
+          <img src="/assets/logo.png" alt="Logo IT CLUB SNEKA">
+        </div>
+        <div>
+          <h1>IT CLUB SNEKA</h1>
+          <div class="muted" style="font-size:12px">SMK N 4 Klaten</div>
+        </div>
+      </div>
+
+      <h1 class="kantin">Kantin Digital</h1>
+
+      <div style="display:flex;align-items:center;gap:10px">
+        <button id="headerCartBtn" class="btn-cart" title="Keranjang">🛒 <span id="cartCount" style="font-weight:700;margin-left:6px">0</span></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div id="mainView" class="container">
+      <div id="app"><!-- products --></div>
+      <div id="loading" style="text-align:center;padding:24px">Memuat produk...</div>
+    </div>
+  </main>
+
+  <!-- Cart Fullscreen Screen -->
+  <div id="cartScreen" class="cart-screen" aria-hidden="true">
+    <div class="cart-box" role="dialog" aria-modal="true">
+      <div class="cart-head">
+        <div>
+          <strong style="font-size:18px">Keranjang Saya</strong>
+          <div class="muted-sm">Periksa pesanan Anda sebelum checkout</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button id="cartCloseBtn" class="btn-secondary">Tutup</button>
+        </div>
+      </div>
+
+      <div class="cart-body" id="cartBody">
+        <!-- items -->
+      </div>
+
+      <div class="cart-foot">
+        <div>
+          <div class="muted-sm">Total</div>
+          <div style="font-weight:700" id="cartTotal">Rp 0</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button id="clearCartBtn" class="btn-secondary" style="background:#fff1f0;color:var(--danger);border:1px solid rgba(220,53,69,0.08)">Kosongkan</button>
+          <button id="checkoutBtn" class="btn-order">Checkout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Qty Modal (neutral) -->
+  <div id="qtyModal" class="qty-modal" aria-hidden="true">
+    <div class="qty-box">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div class="label" id="qtyProductName">Produk</div>
+          <div class="muted-sm" id="qtyProductPrice">Rp 0</div>
+        </div>
+        <div style="width:84px">
+          <img id="qtyProductImg" src="https://via.placeholder.com/320x180?text=No+Image" alt="" style="width:84px;height:64px;object-fit:cover;border-radius:8px">
+        </div>
+      </div>
+
+      <div class="qty-row">
+        <input id="qtyInput" class="qty-input" type="number" min="1" value="1" />
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
+        <button id="qtyCancel" class="btn-secondary">Batal</button>
+        <button id="qtyAdd" class="btn-cart">Tambah ke Keranjang</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Fullscreen -->
+  <div id="orderScreen" class="order-screen" aria-hidden="true">
+    <div class="order-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h2>Form Order</h2>
+        <div>
+          <button id="cancelOrderBtn" class="btn-secondary">Batal</button>
+        </div>
+      </div>
+
+      <div class="card" style="background:#f8fbff; border:1px solid rgba(0,123,255,0.08);">
+
+        <div class="form-row">
+          <div class="form-col">
+            <label>Nama Lengkap</label>
+            <input id="orderNama" type="text" placeholder="Nama lengkap" class="order-input" />
+          </div>
+          <div class="form-col">
+            <label>Kelas</label>
+            <input id="orderKelas" type="text" placeholder="Contoh: XII RPL 2" class="order-input" />
+          </div>
+        </div>
+
+        <div class="form-row" style="margin-top:10px">
+          <div class="form-col">
+            <label>Lokasi / Titik Antar</label>
+            <input id="orderLokasi" type="text" placeholder="Contoh: Depan Lab RPL" class="order-input" />
+          </div>
+          <div class="form-col">
+            <label>No Whatsapp</label>
+            <input id="orderWA" type="text" placeholder="08xxxx" class="order-input" />
+          </div>
+        </div>
+
+      </div>
+
+      <div id="orderItemsWrap" style="margin-top:12px"></div>
+
+      <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
+        <div class="muted-sm">Total: <strong id="orderTotal">Rp 0</strong></div>
+        <div style="display:flex;gap:8px">
+          <button id="submitOrderBtn" class="btn-confirm">Konfirmasi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- toast -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <footer style="margin-top:18px">
+    <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="logo" style="width:36px;height:36px">
+            <img src="/assets/logo.png" alt="Logo IT CLUB SNEKA">
+          </div>
+          <div>
+            <strong>IT CLUB SNEKA</strong>
+            <div class="muted" style="font-size:13px">SMK N 4 Klaten</div>
+          </div>
+        </div>
+      </div>
+      <div class="muted" style="font-size:13px">© <span id="year"></span> IT CLUB SNEKA — Kantin Digital</div>
+    </div>
+  </footer>
+
+  <script>
+    // ---------- KONFIGURASI ----------
+const _0x4121b0=_0x4e09,_0x22de4a=_0x4e09,_0x3dbdfc=_0x4e09,_0x267e55=_0x4e09,_0x10da85=_0x4e09,_0x4a4052=_0x4e09,_0x59891e=_0x4e09,_0x382f7b=_0x4e09;(function(_0x30e736,_0x257fee){const _0x582727=_0x4e09,_0x27e23e=_0x4e09,_0xcdd212=_0x4e09,_0x18f853=_0x4e09,_0x1ca64b=_0x4e09,_0x540fbd=_0x4e09,_0x246331=_0x4e09,_0x25de78=_0x4e09,_0x344873=_0x30e736();while(!![]){try{const _0x584932=-parseInt(_0x582727(0x22d))/0x1+-parseInt(_0x582727(0x24c))/0x2+-parseInt(_0x27e23e(0x266))/0x3*(-parseInt(_0x27e23e(0x278))/0x4)+parseInt(_0x582727(0x1f4))/0x5+parseInt(_0x1ca64b(0x1e3))/0x6+parseInt(_0x582727(0x1e0))/0x7+parseInt(_0x25de78(0x222))/0x8*(-parseInt(_0x25de78(0x214))/0x9);if(_0x584932===_0x257fee)break;else _0x344873['push'](_0x344873['shift']());}catch(_0x39ac47){_0x344873['push'](_0x344873['shift']());}}}(_0x849b,0x34cd7));const SHEET_URL='https://script.google.com/macros/s/AKfycbzhCy-8EpSGYSBnaWppVSjbBNrflJh3lM1eOoNIUE_VFIN1_mkGLxkaQ3GYp7NeHL9I/exec',TELEGRAM_TOKEN=_0x4121b0(0x1f6),TELEGRAM_CHAT_ID=_0x4121b0(0x23d);function rupiah(_0x1be80e){const _0x2bf066=_0x22de4a,_0x1a29fa=_0x4121b0,_0x5a3154=_0x22de4a,_0x41d2eb=_0x4121b0;if(_0x1be80e==null)return'Rp\x200';try{const _0x299db4=Number(_0x1be80e);return _0x299db4[_0x2bf066(0x1ef)](_0x1a29fa(0x271),{'style':'currency','currency':_0x1a29fa(0x220),'maximumFractionDigits':0x0});}catch(_0x5eac56){return _0x5a3154(0x26b)+_0x1be80e;}}function q(_0x1400bd){const _0x41df1b=_0x4121b0;return document[_0x41df1b(0x237)](_0x1400bd);}function escapeHtml(_0xe9170a){const _0x9418c1=_0x22de4a,_0x5964a5=_0x22de4a,_0x4c59bc=_0x22de4a,_0x1f0d5a=_0x4121b0,_0x2841ec=_0x22de4a;if(_0xe9170a===null||_0xe9170a===undefined)return'';return String(_0xe9170a)['replace'](/&/g,'&amp;')[_0x9418c1(0x268)](/</g,'&lt;')['replace'](/>/g,'&gt;')[_0x5964a5(0x268)](/"/g,_0x4c59bc(0x251))[_0x1f0d5a(0x268)](/'/g,_0x1f0d5a(0x259));}function showToast(_0xb5f01f,_0x1bb19e=0x708){const _0x264a0e=_0x22de4a,_0x8b61fe=_0x4121b0,_0x4ce51c=_0x22de4a,_0x5f097d=_0x22de4a,_0x44584d=_0x4121b0,_0x520864=_0x22de4a,_0x3e7e74=q(_0x264a0e(0x1fc));_0x3e7e74['textContent']=_0xb5f01f,_0x3e7e74[_0x264a0e(0x26a)][_0x4ce51c(0x244)](_0x5f097d(0x1fe)),clearTimeout(_0x3e7e74['_t']),_0x3e7e74['_t']=setTimeout(()=>_0x3e7e74[_0x8b61fe(0x26a)]['remove'](_0x5f097d(0x1fe)),_0x1bb19e);}let PRODUCTS=[],orderMode=null,orderItems=[],qtySelectedProduct=null;q(_0x22de4a(0x276))[_0x267e55(0x233)]=new Date()[_0x267e55(0x269)](),fetchDataProduk(),updateCartCount();function fetchDataProduk(){const _0x44c255=_0x4121b0,_0x5108f9=_0x4121b0,_0x14b37a=_0x3dbdfc,_0x5b3093=_0x4121b0,_0x2f04a3=_0x3dbdfc,_0x2a3025=_0x3dbdfc,_0x5a9a2a=_0x3dbdfc,_0x363105=_0x267e55;q(_0x44c255(0x25f))['style']['display']='block',fetch(SHEET_URL)[_0x5108f9(0x21a)](_0x25f688=>_0x25f688[_0x14b37a(0x1f8)]())[_0x5108f9(0x21a)](_0x347b05=>{const _0x291b00=_0x5108f9,_0x38cc5b=_0x14b37a,_0x36703e=_0x5108f9,_0x4b1f37=_0x5b3093,_0x2cd9b0=_0x44c255,_0xeffff9=_0x5108f9,_0x2809c7=_0x44c255,_0x5beb19=_0x5b3093;PRODUCTS=_0x347b05[_0x291b00(0x1e8)](_0x56d115=>({'id':_0x56d115['id']??_0x56d115['ID']??_0x56d115[_0x291b00(0x200)]??'','image':_0x56d115[_0x38cc5b(0x1e9)]??_0x56d115['gambar']??_0x56d115['img']??'','nama':_0x56d115[_0x36703e(0x201)]??_0x56d115[_0x4b1f37(0x263)]??_0x56d115[_0x38cc5b(0x21b)]??'','harga':Number(_0x56d115[_0x291b00(0x25c)]??_0x56d115[_0x38cc5b(0x1e6)]??_0x56d115[_0x38cc5b(0x234)]??0x0),'stock':_0x56d115[_0x36703e(0x243)]??_0x56d115[_0x2cd9b0(0x23c)]??''})),renderList();})[_0x44c255(0x217)](_0x3394e7=>{const _0x1b1d7a=_0x5b3093;console['error'](_0x3394e7),q('app')['innerHTML']=_0x1b1d7a(0x1e1);})[_0x44c255(0x211)](()=>q('loading')[_0x44c255(0x265)][_0x14b37a(0x20e)]=_0x363105(0x227));}function renderList(){const _0x3a3d92=_0x22de4a,_0x2c93da=_0x3dbdfc,_0x1c1d71=_0x22de4a,_0x540b5b=_0x22de4a,_0x36a2fe=_0x4121b0,_0x2471fc=_0x4121b0,_0x2467af=_0x22de4a,_0x432307=_0x4121b0,_0x5a7a4e=q(_0x3a3d92(0x1f5));_0x5a7a4e[_0x2c93da(0x225)]=_0x3a3d92(0x240)+PRODUCTS[_0x1c1d71(0x1e8)](_0xda2b10=>_0x3a3d92(0x252)+escapeHtml(_0xda2b10[_0x3a3d92(0x1e9)]||'')+'\x22\x20alt=\x22Foto\x20'+escapeHtml(_0xda2b10['nama']||'')+_0x36a2fe(0x223)+escapeHtml(_0xda2b10[_0x3a3d92(0x201)]||'')+_0x2471fc(0x230)+rupiah(_0xda2b10[_0x2c93da(0x25c)])+_0x2471fc(0x221)+((_0xda2b10[_0x36a2fe(0x243)]||'')[_0x2467af(0x22f)]()==='sold'?_0x1c1d71(0x228):_0x1c1d71(0x206))+_0x540b5b(0x1eb)+((_0xda2b10['stock']||'')[_0x2471fc(0x22f)]()===_0x36a2fe(0x23f)?'Sold':'Ready')+'\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22product-actions\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<button\x20class=\x22btn-order\x22\x20onclick=\x22onClickOrder(\x27'+_0xda2b10['id']+_0x1c1d71(0x254)+_0xda2b10['id']+_0x2467af(0x1ff))['join']('')+_0x3a3d92(0x216);}function getCart(){const _0x147fd4=_0x22de4a,_0x380655=_0x4121b0;return JSON[_0x147fd4(0x210)](localStorage['getItem'](_0x380655(0x1fb))||'[]');}function setCart(_0x5c4965){const _0x268f40=_0x3dbdfc,_0x568254=_0x267e55;localStorage[_0x268f40(0x261)]('keranjang',JSON[_0x268f40(0x26c)](_0x5c4965)),updateCartCount();}function updateCartCount(){const _0x285bd6=_0x4121b0,_0x1271e2=_0x4121b0,_0x4d7a02=_0x3dbdfc,_0x418064=getCart(),_0x402173=_0x418064[_0x285bd6(0x22e)]((_0x3a1c81,_0x1ab761)=>_0x3a1c81+Number(_0x1ab761['qty']||0x0),0x0);q(_0x1271e2(0x1f0))[_0x1271e2(0x233)]=_0x402173;}function openQtyModalById(_0x13af92){const _0x2538a6=_0x10da85,_0x50df1a=_0x10da85,_0x50e5db=_0x22de4a,_0x37ce15=_0x10da85,_0x5b7613=_0x267e55,_0xee0a90=_0x4121b0,_0x24f424=_0x3dbdfc,_0x179ef2=_0x4121b0,_0x4c0da0=PRODUCTS[_0x2538a6(0x20b)](_0x259552=>_0x259552['id']==_0x13af92);if(!_0x4c0da0){showToast(_0x2538a6(0x207));return;}if((_0x4c0da0[_0x50e5db(0x243)]||'')['toLowerCase']()===_0x50e5db(0x23f)){showToast('Maaf,\x20produk\x20sudah\x20Sold.');return;}qtySelectedProduct=_0x4c0da0,q(_0x37ce15(0x257))['textContent']=_0x4c0da0[_0xee0a90(0x201)],q('qtyProductPrice')[_0x5b7613(0x233)]=rupiah(_0x4c0da0[_0x179ef2(0x25c)]),q('qtyProductImg')[_0xee0a90(0x229)]=_0x4c0da0[_0x24f424(0x1e9)]||_0x2538a6(0x26d),q(_0x37ce15(0x205))[_0x24f424(0x245)]=0x1,q(_0x24f424(0x249))[_0x50e5db(0x26a)][_0x50df1a(0x244)]('open'),q(_0x37ce15(0x249))[_0x24f424(0x20d)](_0x37ce15(0x256),_0x37ce15(0x23b));}function closeQtyModal(){const _0x48aa0b=_0x267e55,_0xa2701c=_0x267e55,_0x4cacd6=_0x4121b0;q('qtyModal')['classList'][_0x48aa0b(0x239)]('open'),q('qtyModal')[_0x48aa0b(0x20d)]('aria-hidden',_0x4cacd6(0x1e4)),qtySelectedProduct=null;}q(_0x10da85(0x25b))[_0x3dbdfc(0x277)](_0x10da85(0x253),()=>closeQtyModal()),q(_0x10da85(0x270))[_0x267e55(0x277)](_0x22de4a(0x253),()=>{const _0x1cebc7=_0x22de4a,_0x4b5b71=_0x382f7b,_0x15aa55=_0x267e55,_0x2dd4fa=_0x382f7b,_0x369b7d=_0x10da85,_0x56855d=_0x4121b0,_0x34fe58=_0x4a4052,_0x78649=_0x382f7b,_0xdcf006=Math[_0x1cebc7(0x218)](0x1,parseInt(q(_0x4b5b71(0x205))[_0x1cebc7(0x245)]||0x1));if(!qtySelectedProduct){showToast(_0x15aa55(0x1df)),closeQtyModal();return;}const _0x39101a=getCart(),_0x37f328=_0x39101a[_0x15aa55(0x20b)](_0x37f13c=>_0x37f13c['id']===qtySelectedProduct['id']);if(_0x37f328)_0x37f328[_0x15aa55(0x215)]=Number(_0x37f328[_0x2dd4fa(0x215)]||0x0)+_0xdcf006;else _0x39101a[_0x369b7d(0x272)]({'id':qtySelectedProduct['id'],'nama':qtySelectedProduct[_0x34fe58(0x201)],'harga':qtySelectedProduct[_0x56855d(0x25c)],'image':qtySelectedProduct[_0x15aa55(0x1e9)],'qty':_0xdcf006});setCart(_0x39101a),closeQtyModal(),showToast(_0x2dd4fa(0x274));});function _0x4e09(_0x2e4806,_0x5c47c3){const _0x849b30=_0x849b();return _0x4e09=function(_0x4e09bc,_0x11f803){_0x4e09bc=_0x4e09bc-0x1df;let _0x35be9a=_0x849b30[_0x4e09bc];return _0x35be9a;},_0x4e09(_0x2e4806,_0x5c47c3);}function openCartScreen(){const _0x9ea140=_0x4a4052,_0x3b7030=_0x267e55,_0x5215e8=_0x4a4052,_0x3a8eb7=_0x10da85,_0x3a76f1=_0x4a4052;renderCartScreen(),q(_0x9ea140(0x24f))['classList'][_0x3b7030(0x244)]('open'),q(_0x3b7030(0x24f))['setAttribute'](_0x9ea140(0x256),_0x3a8eb7(0x23b));}function closeCartScreen(){const _0x25cb2e=_0x382f7b,_0x1e39a7=_0x267e55,_0x54d9e5=_0x3dbdfc,_0x220642=_0x4121b0,_0x2ea4ae=_0x3dbdfc,_0x35022d=_0x3dbdfc;q(_0x25cb2e(0x24f))[_0x25cb2e(0x26a)][_0x1e39a7(0x239)](_0x220642(0x24d)),q('cartScreen')[_0x220642(0x20d)](_0x2ea4ae(0x256),'true');}q(_0x59891e(0x232))['addEventListener'](_0x3dbdfc(0x253),()=>openCartScreen()),q('cartCloseBtn')['addEventListener'](_0x4121b0(0x253),()=>closeCartScreen()),q(_0x382f7b(0x264))[_0x4121b0(0x277)](_0x4a4052(0x253),()=>{const _0x1f70e5=_0x3dbdfc,_0x5148e7=_0x382f7b,_0x303f9f=_0x10da85;if(!confirm(_0x1f70e5(0x226)))return;localStorage[_0x1f70e5(0x202)](_0x5148e7(0x1fb)),updateCartCount(),renderCartScreen();});function renderCartScreen(){const _0x539452=_0x267e55,_0x2c577d=_0x4121b0,_0xb28ba3=_0x59891e,_0x360ee4=_0x10da85,_0x144fc4=_0x4121b0,_0x1d7261=_0x4121b0,_0x31eff8=_0x382f7b,_0x563c60=_0x10da85,_0xc5a5b5=q(_0x539452(0x208)),_0x39f005=getCart();_0xc5a5b5['innerHTML']='';if(_0x39f005[_0x539452(0x231)]===0x0){_0xc5a5b5[_0x2c577d(0x225)]=_0x360ee4(0x241),q(_0xb28ba3(0x219))[_0xb28ba3(0x233)]=rupiah(0x0);return;}let _0xcdeac5=0x0;_0x39f005[_0xb28ba3(0x204)]((_0x158b8f,_0x199765)=>{const _0x27cbc0=_0x2c577d,_0x3e7f0b=_0x1d7261,_0x55ad2a=_0xb28ba3,_0x1f74a=_0x1d7261,_0x3bd161=_0xb28ba3,_0x219932=_0xb28ba3,_0x5305b5=_0x539452,_0x4e1b63=_0x360ee4,_0x2476e1=document[_0x27cbc0(0x246)](_0x3e7f0b(0x20f));_0x2476e1[_0x55ad2a(0x273)]='cart-item';const _0x2d048f=document['createElement'](_0x3e7f0b(0x1ea));_0x2d048f['src']=_0x158b8f['image']||'https://via.placeholder.com/320x180?text=No+Image';const _0x3470f3=document[_0x55ad2a(0x246)](_0x3e7f0b(0x20f));_0x3470f3[_0x27cbc0(0x273)]=_0x1f74a(0x213),_0x3470f3[_0x3bd161(0x225)]=_0x27cbc0(0x242)+escapeHtml(_0x158b8f[_0x27cbc0(0x201)])+'</div><div\x20class=\x22sub\x22>Harga:\x20'+rupiah(_0x158b8f[_0x3e7f0b(0x25c)])+_0x4e1b63(0x235)+_0x158b8f[_0x55ad2a(0x215)]+_0x3e7f0b(0x255);const _0x449c85=document[_0x27cbc0(0x246)](_0x4e1b63(0x20f));_0x449c85['className']='qty-controls';const _0x289b72=document['createElement']('button');_0x289b72[_0x1f74a(0x273)]=_0x5305b5(0x1f9),_0x289b72[_0x3e7f0b(0x233)]='+';const _0x248988=document['createElement']('button');_0x248988['className']=_0x3e7f0b(0x1f9),_0x248988['textContent']='-';const _0x4f082f=document[_0x5305b5(0x246)](_0x55ad2a(0x262));_0x4f082f[_0x1f74a(0x273)]=_0x3bd161(0x1f9),_0x4f082f['textContent']=_0x219932(0x22a),_0x289b72[_0x4e1b63(0x21e)]=()=>{const _0x33cd70=_0x27cbc0,_0x1fd1dc=_0x4e1b63;_0x39f005[_0x199765][_0x33cd70(0x215)]=Number(_0x39f005[_0x199765][_0x1fd1dc(0x215)]||0x0)+0x1,setCart(_0x39f005),renderCartScreen();},_0x248988[_0x3bd161(0x21e)]=()=>{const _0x131170=_0x3e7f0b,_0x2ac9c5=_0x219932,_0x4d0549=_0x27cbc0;_0x39f005[_0x199765][_0x131170(0x215)]=Math[_0x131170(0x218)](0x1,Number(_0x39f005[_0x199765][_0x4d0549(0x215)]||0x1)-0x1),setCart(_0x39f005),renderCartScreen();},_0x4f082f[_0x4e1b63(0x21e)]=()=>{const _0x54233a=_0x1f74a,_0x30b7ed=_0x27cbc0;confirm(_0x54233a(0x1f1))&&(_0x39f005[_0x30b7ed(0x236)](_0x199765,0x1),setCart(_0x39f005),renderCartScreen());},_0x449c85['appendChild'](_0x289b72),_0x449c85[_0x5305b5(0x25e)](_0x248988),_0x449c85[_0x219932(0x25e)](_0x4f082f),_0x2476e1[_0x5305b5(0x25e)](_0x2d048f),_0x2476e1[_0x1f74a(0x25e)](_0x3470f3),_0x2476e1[_0x5305b5(0x25e)](_0x449c85),_0xc5a5b5[_0x3e7f0b(0x25e)](_0x2476e1),_0xcdeac5+=Number(_0x158b8f[_0x4e1b63(0x25c)]||0x0)*Number(_0x158b8f[_0x219932(0x215)]||0x0);}),q(_0x1d7261(0x219))[_0xb28ba3(0x233)]=rupiah(_0xcdeac5);}q(_0x267e55(0x238))[_0x59891e(0x277)](_0x382f7b(0x253),()=>{const _0x220bdf=_0x22de4a,_0x2b1866=_0x3dbdfc,_0x40e602=_0x382f7b,_0x438399=_0x4121b0,_0x8d18c9=_0x267e55,_0x2a8529=getCart();if(_0x2a8529['length']===0x0){showToast(_0x220bdf(0x25d));return;}orderMode=_0x220bdf(0x20c),orderItems=_0x2a8529[_0x40e602(0x1e8)](_0xb28fa4=>({'id':_0xb28fa4['id'],'nama':_0xb28fa4['nama'],'harga':_0xb28fa4[_0x40e602(0x25c)],'qty':_0xb28fa4[_0x2b1866(0x215)]})),closeCartScreen(),openOrderScreen();});function onClickOrder(_0x23e3eb){const _0x14da09=_0x267e55,_0x154d27=_0x59891e,_0x1469e9=_0x3dbdfc,_0x56f1fe=_0x4a4052,_0x44a110=_0x382f7b,_0x1ce625=PRODUCTS[_0x14da09(0x20b)](_0x976abc=>_0x976abc['id']==_0x23e3eb);if(!_0x1ce625){showToast('Produk\x20tidak\x20ditemukan');return;}if((_0x1ce625[_0x14da09(0x243)]||'')[_0x1469e9(0x22f)]()===_0x1469e9(0x23f)){showToast(_0x14da09(0x1e5));return;}orderMode='single',orderItems=[{'id':_0x1ce625['id'],'nama':_0x1ce625['nama'],'harga':_0x1ce625['harga'],'qty':0x1}],openOrderScreen();}function openOrderScreen(){const _0x4ed831=_0x4a4052,_0x3234ff=_0x22de4a,_0xfe1705=_0x10da85,_0x5d1dbc=_0x59891e,_0xb7b120=_0x4a4052,_0x375622=_0x22de4a,_0x4df088=_0x3dbdfc,_0x4e1dda=_0x10da85,_0x180560=q(_0x4ed831(0x260));_0x180560[_0x4ed831(0x225)]='';let _0x340410=0x0;orderItems[_0x4ed831(0x204)](_0x22b21c=>{const _0x154b22=_0x4ed831,_0x380678=_0xfe1705,_0xd2a374=_0xfe1705,_0x343a09=_0x4ed831,_0x18b358=_0xfe1705,_0x3e48cf=_0xfe1705,_0x1c7729=_0xfe1705,_0x5d38fd=_0x3234ff,_0x14abd3=document['createElement'](_0x154b22(0x20f));_0x14abd3[_0x154b22(0x273)]=_0xd2a374(0x209),_0x14abd3[_0xd2a374(0x265)]['marginBottom']=_0xd2a374(0x1f7),_0x14abd3['textContent']=_0x22b21c[_0x3e48cf(0x201)]+'\x20('+_0x22b21c['qty']+')\x20-\x20'+rupiah(Number(_0x22b21c[_0x3e48cf(0x25c)])*Number(_0x22b21c[_0x380678(0x215)])),_0x180560[_0xd2a374(0x25e)](_0x14abd3),_0x340410+=Number(_0x22b21c[_0x1c7729(0x25c)])*Number(_0x22b21c[_0x5d38fd(0x215)]);}),q(_0x3234ff(0x26e))[_0x5d1dbc(0x233)]=rupiah(_0x340410),q('orderNama')[_0xfe1705(0x245)]='',q(_0xfe1705(0x24a))[_0x4ed831(0x245)]='',q(_0x5d1dbc(0x24b))[_0xb7b120(0x245)]='',q('orderWA')[_0x3234ff(0x245)]='',q(_0x3234ff(0x20a))[_0x3234ff(0x26a)][_0x5d1dbc(0x244)](_0x5d1dbc(0x24d)),q(_0x3234ff(0x20a))[_0x3234ff(0x20d)](_0x375622(0x256),'false'),window['scrollTo']({'top':0x0,'behavior':_0x4e1dda(0x1ed)});}q(_0x4121b0(0x248))['addEventListener'](_0x22de4a(0x253),()=>{closeOrderScreen();});function closeOrderScreen(){const _0x4a6d48=_0x4a4052,_0x2082c8=_0x382f7b,_0x5ad931=_0x4a4052,_0x219aa6=_0x59891e,_0x48824a=_0x382f7b,_0x1facef=_0x3dbdfc,_0x3f6aed=_0x22de4a,_0x5a84c5=_0x4121b0;q(_0x4a6d48(0x20a))[_0x2082c8(0x26a)][_0x5ad931(0x239)](_0x219aa6(0x24d)),q(_0x2082c8(0x20a))[_0x4a6d48(0x20d)](_0x3f6aed(0x256),_0x219aa6(0x1e4)),orderMode=null,orderItems=[];}q(_0x10da85(0x1f3))[_0x382f7b(0x277)](_0x267e55(0x253),submitOrder);async function submitOrder(){const _0x417b0a=_0x4a4052,_0x53e32d=_0x59891e,_0x20b54f=_0x267e55,_0x458ca1=_0x4121b0,_0x518855=_0x4a4052,_0x13f8da=_0x22de4a,_0x192d1a=_0x267e55,_0x5b0b6c=_0x59891e,_0x115894=q(_0x417b0a(0x22c))[_0x417b0a(0x245)][_0x417b0a(0x212)](),_0x1134ad=q(_0x53e32d(0x24a))['value']['trim'](),_0x4d791d=q(_0x417b0a(0x24b))[_0x458ca1(0x245)][_0x13f8da(0x212)](),_0x270c92=q('orderWA')[_0x20b54f(0x245)][_0x518855(0x212)]();if(!_0x115894||!_0x1134ad||!_0x4d791d||!_0x270c92){showToast(_0x5b0b6c(0x250));return;}if(!orderItems||orderItems[_0x13f8da(0x231)]===0x0){showToast(_0x192d1a(0x1f2));return;}const _0x4adde8=orderItems['reduce']((_0x174e44,_0x50db07)=>_0x174e44+Number(_0x50db07[_0x13f8da(0x25c)])*Number(_0x50db07[_0x458ca1(0x215)]),0x0),_0x39fee8=orderItems[_0x13f8da(0x1e8)](_0x4737d=>{const _0x5d9c51=_0x458ca1,_0xf26304=_0x53e32d,_0x131a13=_0x192d1a,_0x43eceb=_0x417b0a,_0x15e810=_0x13f8da,_0x2d7792=Number(_0x4737d[_0x5d9c51(0x25c)])*Number(_0x4737d[_0x5d9c51(0x215)]);return escapeHtml(_0x4737d[_0x131a13(0x201)])+'\x20x'+_0x4737d[_0x43eceb(0x215)]+_0x15e810(0x24e)+rupiah(_0x2d7792);})['join']('\x0a'),_0x1bf86c=(_0x20b54f(0x22b)+escapeHtml(_0x115894)+_0x5b0b6c(0x1e2)+escapeHtml(_0x1134ad)+'\x0a<b>Lokasi:</b>\x20'+escapeHtml(_0x4d791d)+_0x192d1a(0x21c)+escapeHtml(_0x270c92)+'\x0a\x0a<b>Daftar\x20Pesanan:</b>\x0a'+escapeHtml(_0x39fee8)+_0x20b54f(0x1fa)+escapeHtml(rupiah(_0x4adde8))+_0x53e32d(0x224))[_0x417b0a(0x212)](),_0x2dc73a=q(_0x192d1a(0x1f3));_0x2dc73a['disabled']=!![],_0x2dc73a[_0x53e32d(0x233)]=_0x5b0b6c(0x1ec);try{const _0x419fba=_0x518855(0x23a)+TELEGRAM_TOKEN+_0x518855(0x1e7),_0x9ef716={'chat_id':TELEGRAM_CHAT_ID,'text':_0x1bf86c,'parse_mode':_0x417b0a(0x21f)},_0x53dbc0=await fetch(_0x419fba,{'method':'POST','headers':{'Content-Type':_0x20b54f(0x26f)},'body':JSON[_0x192d1a(0x26c)](_0x9ef716)}),_0x58c569=await _0x53dbc0[_0x53e32d(0x1f8)]();if(!_0x58c569['ok']){console['error'](_0x417b0a(0x258),_0x58c569);throw new Error('Gagal\x20mengirim\x20ke\x20Telegram');}orderMode===_0x518855(0x20c)&&localStorage['removeItem'](_0x458ca1(0x1fb)),orderMode=null,orderItems=[],_0x2dc73a[_0x417b0a(0x1ee)]=![],_0x2dc73a[_0x20b54f(0x233)]=_0x53e32d(0x275),closeOrderScreen(),renderList(),updateCartCount(),showToast(_0x20b54f(0x203));}catch(_0x1ee054){console[_0x5b0b6c(0x267)](_0x1ee054),_0x2dc73a['disabled']=![],_0x2dc73a[_0x458ca1(0x233)]=_0x192d1a(0x275),showToast(_0x458ca1(0x1fd));}}document[_0x382f7b(0x277)](_0x22de4a(0x21d),_0x20edab=>{const _0x2c2995=_0x3dbdfc,_0x46d5b8=_0x382f7b,_0x36039a=_0x22de4a,_0x55dfec=_0x382f7b,_0x13024f=_0x4a4052,_0x4055c4=_0x267e55,_0x68d97a=_0x4a4052,_0x3e9b97=_0x267e55;if(_0x20edab[_0x2c2995(0x23e)]===_0x46d5b8(0x25a)){if(q(_0x46d5b8(0x20a))['classList'][_0x55dfec(0x247)]('open'))closeOrderScreen();else{if(q('cartScreen')[_0x2c2995(0x26a)]['contains'](_0x36039a(0x24d)))closeCartScreen();else{if(q(_0x46d5b8(0x249))[_0x4055c4(0x26a)][_0x4055c4(0x247)](_0x3e9b97(0x24d)))closeQtyModal();}}}});function _0x849b(){const _0xa92203=['disabled','toLocaleString','cartCount','Hapus\x20item?','Tidak\x20ada\x20produk\x20untuk\x20dipesan','submitOrderBtn','1067950VZJnBh','app','8248686986:AAFKgx62zbsqzNNbK0xWhwDamkxygACHguw','8px','json','btn-secondary','\x0a\x0a<b>Total:</b>\x20','keranjang','toast','Gagal\x20mengirim\x20order\x20ke\x20Telegram.\x20Coba\x20lagi.','show','\x27)\x22>Keranjang</button>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','kode','nama','removeItem','Order\x20berhasil\x20dikirim\x20ke\x20Telegram.\x20Terima\x20kasih!','forEach','qtyInput','#1e7e34','Produk\x20tidak\x20ditemukan','cartBody','card','orderScreen','find','cart','setAttribute','display','div','parse','finally','trim','meta','63wLJfrR','qty','\x0a\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20','catch','max','cartTotal','then','title','\x0a<b>No\x20WA:</b>\x20','keydown','onclick','HTML','IDR','</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22stock\x22\x20style=\x22font-weight:600;color:','391088EixnsB','\x22\x20onerror=\x22this.src=\x27https://via.placeholder.com/320x180?text=No+Image\x27\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22product-title\x22>','\x0a\x20\x20\x20\x20\x20\x20','innerHTML','Kosongkan\x20keranjang?','none','#dc3545','src','Hapus','\x0a<b>🛒\x20PESANAN\x20BARU\x20-\x20Kantin\x20Digital</b>\x0a<b>Nama:</b>\x20','orderNama','204861JHytDu','reduce','toLowerCase','</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20style=\x22display:flex;justify-content:space-between;align-items:center;width:100%;margin-top:4px\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22price\x22>','length','headerCartBtn','textContent','price_num','\x20×\x20','splice','getElementById','checkoutBtn','remove','https://api.telegram.org/bot','false','stok','7133374029','key','sold','\x0a\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22product-grid\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','<div\x20class=\x22muted-sm\x22>Keranjang\x20kosong\x20—\x20tambahkan\x20produk\x20dulu</div>','<div\x20class=\x22name\x22>','stock','add','value','createElement','contains','cancelOrderBtn','qtyModal','orderKelas','orderLokasi','312996VgJziG','open','\x20—\x20','cartScreen','Mohon\x20lengkapi\x20semua\x20data','&quot;','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22product-card\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<img\x20class=\x22product-logo\x22\x20src=\x22','click','\x27)\x22>Order</button>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<button\x20class=\x22btn-cart\x22\x20onclick=\x22openQtyModalById(\x27','</div>','aria-hidden','qtyProductName','Telegram\x20API\x20error','&#39;','Escape','qtyCancel','harga','Keranjang\x20kosong','appendChild','loading','orderItemsWrap','setItem','button','name','clearCartBtn','style','27QnbiUg','error','replace','getFullYear','classList','Rp\x20','stringify','https://via.placeholder.com/320x180?text=No+Image','orderTotal','application/json','qtyAdd','id-ID','push','className','Produk\x20berhasil\x20ditambahkan\x20ke\x20keranjang','Konfirmasi','year','addEventListener','89592qUtjvM','Tidak\x20ada\x20produk\x20dipilih','941731wQzNGb','<p\x20style=\x27text-align:center;color:red\x27>Gagal\x20memuat\x20data\x20produk</p>','\x0a<b>Kelas:</b>\x20','2220810yMKDdF','true','Maaf,\x20produk\x20sudah\x20Sold.','price','/sendMessage','map','image','img',';\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','Mengirim...','smooth'];_0x849b=function(){return _0xa92203;};return _0x849b();}
+  </script>
+</body>
+</html>
